@@ -13,7 +13,7 @@ jobs:
         run: |
           Invoke-WebRequest http://developer.download.nvidia.com/compute/cuda/11.0.1/network_installers/cuda_11.0.1_win10_network.exe -OutFile .\cuda_setup.exe
           .\cuda_setup.exe -s nvcc_11.0
-        shell: poweshell
+        shell: powershell
       - name: Build project on Windows
         run: |
           dir "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA"
