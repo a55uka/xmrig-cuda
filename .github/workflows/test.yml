@@ -11,8 +11,8 @@ jobs:
         uses: actions/checkout@master
       - name: Install CUDA
         run: |
-          powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-          choco install cuda --version=10.1
+          powershell -Command "Invoke-WebRequest http://developer.download.nvidia.com/compute/cuda/11.0.1/network_installers/cuda_11.0.1_win10_network.exe -OutFile .\cuda_setup.exe"
+	  .\cuda_setup.exe -s nvcc_11.0
       - name: Build project on Windows
         run: |
           cmake . -G "Visual Studio 16 2019"
