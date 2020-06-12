@@ -1,0 +1,20 @@
+on: push
+
+name: Test builds
+
+jobs:
+  build_win:
+    name: Windows build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Install CUDA
+        run: |
+          @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+          choco install cuda
+      - name: Build project on Windows
+        run: |
+          cmake . -G "Visual Studio 16 2019"
+          cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin"
+          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln
