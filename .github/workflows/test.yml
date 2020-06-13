@@ -81,7 +81,7 @@ jobs:
         run: |
           Invoke-WebRequest https://developer.nvidia.com/compute/cuda/9.2/Prod2/network_installers2/cuda_9.2.148_win10_network -OutFile .\cuda_setup.exe
           cmd /c start /wait .\cuda_setup.exe -s nvcc_9.2 cudart_9.2 nvrtc_9.2 nvrtc_dev_9.2
-          (Get-Content -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.2\include\crt\host_config.h") -replace "1913","1914" | Set-Content "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.2\include\crt\host_config.h"
+          (Get-Content -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.2\include\crt\host_config.h") -replace "1913","1920" | Set-Content "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.2\include\crt\host_config.h"
           Select-String -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.2\include\crt\host_config.h" -Pattern "_MSC_VER"
         shell: powershell
       - name: Build project on Windows
@@ -100,7 +100,7 @@ jobs:
         run: |
           Invoke-WebRequest https://developer.nvidia.com/compute/cuda/9.1/Prod/network_installers/cuda_9.1.85_win10_network -OutFile .\cuda_setup.exe
           cmd /c start /wait .\cuda_setup.exe -s nvcc_9.1 cudart_9.1 nvrtc_9.1 nvrtc_dev_9.1
-          (Get-Content -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.1\include\crt\host_config.h") -replace "1913","1914" | Set-Content "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.1\include\crt\host_config.h"
+          (Get-Content -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.1\include\crt\host_config.h") -replace "1911","1920" | Set-Content "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.1\include\crt\host_config.h"
           Select-String -Path "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.1\include\crt\host_config.h" -Pattern "_MSC_VER"
         shell: powershell
       - name: Build project on Windows
