@@ -50,7 +50,6 @@ public:
         CN_RWZ,        // "cn/rwz"           CryptoNight variant 2 with 3/4 iterations and reversed shuffle operation (Graft).
         CN_ZLS,        // "cn/zls"           CryptoNight variant 2 with 3/4 iterations (Zelerius).
         CN_DOUBLE,     // "cn/double"        CryptoNight variant 2 with double iterations (X-CASH).
-        CN_GPU,        // "cn/gpu"           CryptoNight-GPU (Ryo).
         CN_LITE_0,     // "cn-lite/0"        CryptoNight-Lite variant 0.
         CN_LITE_1,     // "cn-lite/1"        CryptoNight-Lite variant 1.
         CN_HEAVY_0,    // "cn-heavy/0"       CryptoNight-Heavy (4 MB).
@@ -59,6 +58,7 @@ public:
         CN_PICO_0,     // "cn-pico"          CryptoNight-Pico
         CN_PICO_TLO,   // "cn-pico/tlo"      CryptoNight-Pico (TLO)
         CN_CCX,        // "cn/ccx"           Conceal (CCX)
+        CN_GPU,        // "cn/gpu"           CryptoNight-GPU (Ryo).
         RX_0,          // "rx/0"             RandomX (reference configuration).
         RX_WOW,        // "rx/wow"           RandomWOW (Wownero).
         RX_LOKI,       // "rx/loki"          RandomXL (Loki).
@@ -69,6 +69,7 @@ public:
         AR2_WRKZ,      // "argon2/wrkz"      Argon2id (WRKZ)
         ASTROBWT_DERO, // "astrobwt"         AstroBWT (Dero)
         KAWPOW_RVN,    // "kawpow/rvn"       KawPow (RVN)
+        RX_DEFYX,      // "defyx"            DefyX (Scala).
         MAX
     };
 
@@ -113,6 +114,7 @@ public:
 
         case RX_WOW:
         case RX_KEVA:
+        case RX_DEFYX:
             return 0x20000;
 
         case RX_ARQ:
@@ -164,6 +166,7 @@ public:
                 return oneMiB;
 
             case RX_ARQ:
+            case RX_DEFYX:
                 return oneMiB / 4;
 
             default:
@@ -216,6 +219,7 @@ public:
         case CN_ZLS:
         case CN_DOUBLE:
         case CN_CCX:
+        case CN_GPU:
             return CN;
 
         case CN_LITE_0:
@@ -237,6 +241,7 @@ public:
         case RX_ARQ:
         case RX_SFX:
         case RX_KEVA:
+        case RX_DEFYX:
             return RANDOM_X;
 
         case AR2_CHUKWA:
