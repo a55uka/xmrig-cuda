@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 set(MSG_CUDA_MAP "\n\n"
     "  Valid CUDA Toolkit Map:\n"
     "   8.x for Fermi/Kepler/Maxwell/Pascal,\n"
@@ -12,7 +11,6 @@ if (CUDA_VERSION VERSION_LESS 8.0)
     message(FATAL_ERROR "Unsupported CUDA version '${CUDA_VERSION}' detected.")
 endif()
 
-=======
 add_definitions(-DCUB_IGNORE_DEPRECATED_CPP_DIALECT -DTHRUST_IGNORE_DEPRECATED_CPP_DIALECT)
 
 option(XMRIG_LARGEGRID "Support large CUDA block count > 128" ON)
@@ -40,7 +38,6 @@ find_library(CUDA_NVRTC_LIB libnvrtc nvrtc HINTS "${CUDA_TOOLKIT_ROOT_DIR}/lib64
 
 set(LIBS ${LIBS} ${CUDA_LIBRARIES} ${CUDA_LIB} ${CUDA_NVRTC_LIB})
 
->>>>>>> 4234fa17fb47ff163230e8cc0531c40033bd71ba
 set(DEFAULT_CUDA_ARCH "50")
 
 # Fermi GPUs are only supported with CUDA < 9.0
