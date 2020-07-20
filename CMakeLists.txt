@@ -53,6 +53,7 @@ endif()
 
 include_directories(src)
 add_definitions(/DCUB_IGNORE_DEPRECATED_CPP_DIALECT)
+add_definitions(/DXMRIG_ALGO_CN_LITE /DXMRIG_ALGO_CN_HEAVY /DXMRIG_ALGO_CN_PICO)
 
 
 include(cmake/cpu.cmake)

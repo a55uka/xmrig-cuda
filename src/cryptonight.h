@@ -60,7 +60,7 @@ struct nvid_ctx {
     bool ready                          = false;
 
     uint32_t *d_input                   = nullptr;
-    uint32_t inputlen                   = 0;
+    int inputlen                        = 0;
     uint32_t *d_result_count            = nullptr;
     uint32_t *d_result_nonce            = nullptr;
     uint32_t *d_long_state              = nullptr;
@@ -102,7 +102,8 @@ struct nvid_ctx {
     size_t kawpow_dag_size              = 0;
     size_t kawpow_dag_capacity          = 0;
 
-    uint32_t* kawpow_stop               = nullptr;
+    uint32_t* kawpow_stop_host          = nullptr;
+    uint32_t* kawpow_stop_device        = nullptr;
 
     uint32_t kawpow_period              = 0;
     CUmodule kawpow_module              = nullptr;
