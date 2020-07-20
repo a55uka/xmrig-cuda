@@ -13,31 +13,6 @@ endif()
 
 add_definitions(-DCUB_IGNORE_DEPRECATED_CPP_DIALECT -DTHRUST_IGNORE_DEPRECATED_CPP_DIALECT)
 
-option(XMRIG_LARGEGRID "Support large CUDA block count > 128" ON)
-if (XMRIG_LARGEGRID)
-    add_definitions("-DXMRIG_LARGEGRID=${XMRIG_LARGEGRID}")
-endif()
-
-set(DEVICE_COMPILER "nvcc")
-set(CUDA_COMPILER "${DEVICE_COMPILER}" CACHE STRING "Select the device compiler")
-
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    list(APPEND DEVICE_COMPILER "clang")
-endif()
-
-set_property(CACHE CUDA_COMPILER PROPERTY STRINGS "${DEVICE_COMPILER}")
-
-list(APPEND CMAKE_PREFIX_PATH "$ENV{CUDA_ROOT}")
-list(APPEND CMAKE_PREFIX_PATH "$ENV{CMAKE_PREFIX_PATH}")
-
-set(CUDA_STATIC ON)
-find_package(CUDA 8.0 REQUIRED)
-
-find_library(CUDA_LIB libcuda cuda HINTS "${CUDA_TOOLKIT_ROOT_DIR}/lib64" "${LIBCUDA_LIBRARY_DIR}" "${CUDA_TOOLKIT_ROOT_DIR}/lib/x64" /usr/lib64 /usr/local/cuda/lib64)
-find_library(CUDA_NVRTC_LIB libnvrtc nvrtc HINTS "${CUDA_TOOLKIT_ROOT_DIR}/lib64" "${LIBNVRTC_LIBRARY_DIR}" "${CUDA_TOOLKIT_ROOT_DIR}/lib/x64" /usr/lib64 /usr/local/cuda/lib64)
-
-set(LIBS ${LIBS} ${CUDA_LIBRARIES} ${CUDA_LIB} ${CUDA_NVRTC_LIB})
-
 set(DEFAULT_CUDA_ARCH "50")
 
 # Fermi GPUs are only supported with CUDA < 9.0
@@ -48,8 +23,6 @@ endif()
 # Kepler GPUs are only supported with CUDA < 11.0
 if (CUDA_VERSION VERSION_LESS 11.0)
     list(APPEND DEFAULT_CUDA_ARCH "30")
-else()
-    list(APPEND DEFAULT_CUDA_ARCH "35")
 endif()
 
 # add Pascal support for CUDA >= 8.0
@@ -74,6 +47,8 @@ endif()
 list(SORT DEFAULT_CUDA_ARCH)
 
 set(CUDA_ARCH "${DEFAULT_CUDA_ARCH}" CACHE STRING "Set GPU architecture (semicolon separated list, e.g. '-DCUDA_ARCH=20;35;60')")
+
+set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "-Wno-deprecated-gpu-targets")
 
 # validate architectures (only numbers are allowed)
 foreach(CUDA_ARCH_ELEM ${CUDA_ARCH})
@@ -159,10 +134,9 @@ elseif("${CUDA_COMPILER}" STREQUAL "nvcc")
     if (CUDA_VERSION VERSION_LESS 8.0)
         add_definitions(-D_FORCE_INLINES)
         add_definitions(-D_MWAITXINTRIN_H_INCLUDED)
+    elseif(CUDA_VERSION VERSION_LESS 9.0)
+        set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "-Wno-deprecated-gpu-targets")
     endif()
-
-    set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "-Wno-deprecated-gpu-targets")
-
     foreach(CUDA_ARCH_ELEM ${CUDA_ARCH})
         # set flags to create device code for the given architecture
         if("${CUDA_ARCH_ELEM}" STREQUAL "21")
