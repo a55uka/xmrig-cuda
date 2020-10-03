@@ -1,3 +1,9 @@
+# v6.3.2
+- [#65](https://github.com/xmrig/xmrig-cuda/pull/65) Fixed broken AstroBWT.
+
+# v6.3.1
+- [#62](https://github.com/xmrig/xmrig-cuda/pull/62) Fixed broken RandomX (regression since v6.2.1).
+
 # v6.3.0
 - [#59](https://github.com/xmrig/xmrig-cuda/pull/59) Added support for upcoming Haven offshore fork.
 - Fixed build with recent CUDA 11.

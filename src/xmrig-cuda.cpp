@@ -385,7 +385,14 @@ bool setJob_v2(nvid_ctx *ctx, const void *data, size_t size, const char *algo)
     }
 
     try {
-        cryptonight_extra_cpu_set_data(ctx, data, size);
+        const xmrig::Algorithm::Family f = xmrig::Algorithm::family(ctx->algorithm);
+
+        if ((f == xmrig::Algorithm::RANDOM_X) || (f == xmrig::Algorithm::ASTROBWT)) {
+            cuda_extra_cpu_set_data(ctx, data, size);
+        }
+        else {
+            cryptonight_extra_cpu_set_data(ctx, data, size);
+        }
     }
     catch (std::exception &ex) {
         saveError(ctx->device_id, ex);
@@ -407,7 +414,14 @@ bool setJob(nvid_ctx *ctx, const void *data, size_t size, int32_t algo)
     ctx->algorithm = algo;
 
     try {
-        cryptonight_extra_cpu_set_data(ctx, data, size);
+        const xmrig::Algorithm::Family f = xmrig::Algorithm::family(ctx->algorithm);
+
+        if ((f == xmrig::Algorithm::RANDOM_X) || (f == xmrig::Algorithm::ASTROBWT)) {
+            cuda_extra_cpu_set_data(ctx, data, size);
+        }
+        else {
+            cryptonight_extra_cpu_set_data(ctx, data, size);
+        }
     }
     catch (std::exception &ex) {
         saveError(ctx->device_id, ex);

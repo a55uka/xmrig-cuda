@@ -350,6 +350,13 @@ void cryptonight_extra_cpu_set_data(nvid_ctx *ctx, const void *data, size_t len)
 }
 
 
+void cuda_extra_cpu_set_data(nvid_ctx *ctx, const void *data, size_t len)
+{
+    ctx->inputlen = static_cast<unsigned int>(len);
+    CUDA_CHECK(ctx->device_id, cudaMemcpy(ctx->d_input, data, len, cudaMemcpyHostToDevice));
+}
+
+
 int cryptonight_extra_cpu_init(nvid_ctx *ctx, const xmrig::Algorithm &algorithm, size_t hashMemSize)
 {
     using namespace xmrig;
