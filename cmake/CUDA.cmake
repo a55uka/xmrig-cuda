@@ -236,11 +236,11 @@ set(CUDA_SOURCES
 )
 
 if("${CUDA_COMPILER}" STREQUAL "clang")
-    add_library(xmrig-cu STATIC ${CUDA_SOURCES})
+    add_library(xmrig-cu STATIC ${CUDA_SOURCES} ${CUDA_RANDOMX_SOURCES} ${CUDA_ASTROBWT_SOURCES} ${CUDA_KAWPOW_SOURCES})
 
     set_target_properties(xmrig-cu PROPERTIES COMPILE_FLAGS ${CLANG_BUILD_FLAGS})
     set_target_properties(xmrig-cu PROPERTIES LINKER_LANGUAGE CXX)
-    set_source_files_properties(${CUDA_SOURCES} PROPERTIES LANGUAGE CXX)
+    set_source_files_properties(${CUDA_SOURCES} ${CUDA_RANDOMX_SOURCES} PROPERTIES LANGUAGE CXX)
 else()
-    cuda_add_library(xmrig-cu STATIC ${CUDA_SOURCES})
+    cuda_add_library(xmrig-cu STATIC ${CUDA_SOURCES} ${CUDA_RANDOMX_SOURCES} ${CUDA_ASTROBWT_SOURCES} ${CUDA_KAWPOW_SOURCES})
 endif()
