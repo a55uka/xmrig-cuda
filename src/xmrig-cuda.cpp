@@ -182,10 +182,6 @@ bool rxHash(nvid_ctx *ctx, uint32_t startNonce, uint64_t target, uint32_t *resco
             RandomX_Wownero::hash(ctx, startNonce, target, rescount, resnonce, ctx->rx_batch_size);
             break;
 
-        case xmrig::Algorithm::RX_LOKI:
-            RandomX_Loki::hash(ctx, startNonce, target, rescount, resnonce, ctx->rx_batch_size);
-            break;
-
         case xmrig::Algorithm::RX_ARQ:
             RandomX_Arqma::hash(ctx, startNonce, target, rescount, resnonce, ctx->rx_batch_size);
             break;
@@ -284,6 +280,7 @@ bool astroBWTPrepare(nvid_ctx *ctx, uint32_t batchSize)
 
 bool kawPowHash(nvid_ctx *ctx, uint8_t* job_blob, uint64_t target, uint32_t *rescount, uint32_t *resnonce, uint32_t *skipped_hashes)
 {
+#   ifdef XMRIG_DRIVER_API
     resetError(ctx->device_id);
 
     try {
@@ -305,11 +302,17 @@ bool kawPowHash(nvid_ctx *ctx, uint8_t* job_blob, uint64_t target, uint32_t *res
     }
 
     return true;
+#   else
+    saveError(ctx->device_id, kUnsupportedAlgorithm);
+
+    return false;
+#   endif
 }
 
 
 bool kawPowPrepare(nvid_ctx *ctx, const void* cache, size_t cache_size, size_t dag_size, uint32_t height, const uint64_t* dag_sizes)
 {
+#   ifdef XMRIG_DRIVER_API
     resetError(ctx->device_id);
 
     try {
@@ -326,11 +329,17 @@ bool kawPowPrepare(nvid_ctx *ctx, const void* cache, size_t cache_size, size_t d
     }
 
     return true;
+#   else
+    saveError(ctx->device_id, kUnsupportedAlgorithm);
+
+    return false;
+#   endif
 }
 
 
 bool kawPowPrepare_v2(nvid_ctx *ctx, const void* cache, size_t cache_size, const void* dag_precalc, size_t dag_size, uint32_t height, const uint64_t* dag_sizes)
 {
+#   ifdef XMRIG_DRIVER_API
     resetError(ctx->device_id);
 
     try {
@@ -347,11 +356,17 @@ bool kawPowPrepare_v2(nvid_ctx *ctx, const void* cache, size_t cache_size, const
     }
 
     return true;
+#   else
+    saveError(ctx->device_id, kUnsupportedAlgorithm);
+
+    return false;
+#   endif
 }
 
 
 bool kawPowStopHash(nvid_ctx *ctx)
 {
+#   ifdef XMRIG_DRIVER_API
     try {
 #       ifdef XMRIG_ALGO_KAWPOW
         kawpow_stop_hash(ctx);
@@ -366,6 +381,11 @@ bool kawPowStopHash(nvid_ctx *ctx)
     }
 
     return true;
+#   else
+    saveError(ctx->device_id, kUnsupportedAlgorithm);
+
+    return false;
+#   endif
 }
 
 
@@ -591,7 +611,9 @@ uint64_t deviceUlong(nvid_ctx *ctx, DeviceProperty property)
 
 void init()
 {
+#   ifdef XMRIG_DRIVER_API
     cuInit(0);
+#   endif
 }
 
 
@@ -639,6 +661,7 @@ void release(nvid_ctx *ctx)
     cudaFree(ctx->astrobwt_offsets_begin);
     cudaFree(ctx->astrobwt_offsets_end);
 
+#   ifdef XMRIG_DRIVER_API
     cudaFree(ctx->kawpow_cache);
     cudaFree(ctx->kawpow_dag);
     cudaFreeHost(ctx->kawpow_stop_host);
@@ -646,7 +669,10 @@ void release(nvid_ctx *ctx)
     cuModuleUnload(ctx->module);
     cuModuleUnload(ctx->kawpow_module);
 
-    cuCtxDestroy(ctx->cuContext);
+    if (ctx->cuDevice != -1) {
+        cuDevicePrimaryCtxRelease(ctx->cuDevice);
+    }
+#   endif
 
     delete ctx;
 }

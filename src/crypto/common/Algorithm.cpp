@@ -52,14 +52,12 @@ struct AlgoName
 static AlgoName const algorithm_names[] = {
     { "rx/0",             Algorithm::RX_0            },
     { "rx/wow",           Algorithm::RX_WOW          },
-    { "rx/loki",          Algorithm::RX_LOKI         },
     { "rx/arq",           Algorithm::RX_ARQ          },
     { "rx/sfx",           Algorithm::RX_SFX          },
     { "rx/keva",          Algorithm::RX_KEVA         },
     { "cn/0",             Algorithm::CN_0            },
     { "cn/1",             Algorithm::CN_1            },
     { "cn/2",             Algorithm::CN_2            },
-    { "cn/r",             Algorithm::CN_R            },
     { "cn/fast",          Algorithm::CN_FAST         },
     { "cn/half",          Algorithm::CN_HALF         },
     { "cn/xao",           Algorithm::CN_XAO          },
@@ -78,9 +76,12 @@ static AlgoName const algorithm_names[] = {
     { "cn/gpu",           Algorithm::CN_GPU          },
     { "astrobwt",         Algorithm::ASTROBWT_DERO   },
     { "astrobwt/dero",    Algorithm::ASTROBWT_DERO   },
+    { "defyx",            Algorithm::RX_DEFYX        },
+#   ifdef XMRIG_DRIVER_API
     { "kawpow",           Algorithm::KAWPOW_RVN      },
     { "kawpow/rvn",       Algorithm::KAWPOW_RVN      },
-    { "defyx",            Algorithm::RX_DEFYX        },
+    { "cn/r",             Algorithm::CN_R            },
+#   endif
 };
 
 

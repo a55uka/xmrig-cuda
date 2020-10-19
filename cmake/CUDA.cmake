@@ -100,7 +100,9 @@ foreach(CUDA_ARCH_ELEM ${CUDA_ARCH})
         endif()
     endif()
 endforeach()
+
 unset(MSG_CUDA_MAP)
+
 list(SORT CUDA_ARCH)
 
 option(XMRIG_LARGEGRID "Support large CUDA block count > 128" ON)
@@ -142,8 +144,7 @@ elseif("${CUDA_COMPILER}" STREQUAL "nvcc")
         if("${CUDA_ARCH_ELEM}" STREQUAL "21")
             # "2.1" actually does run faster when compiled as itself, versus in "2.0" compatible mode
             # strange virtual code type on top of compute_20, with no compute_21 (so the normal rule fails)
-            set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}
-                    "--generate-code arch=compute_20,code=sm_21")
+            set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--generate-code arch=compute_20,code=sm_21")
         else()
             set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}
                     "--generate-code arch=compute_${CUDA_ARCH_ELEM},code=sm_${CUDA_ARCH_ELEM} --generate-code arch=compute_${CUDA_ARCH_ELEM},code=compute_${CUDA_ARCH_ELEM}")
@@ -159,15 +160,15 @@ elseif("${CUDA_COMPILER}" STREQUAL "nvcc")
     if (CUDA_SHOW_CODELINES)
         set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS}" --source-in-ptx -lineinfo)
         set(CUDA_KEEP_FILES ON CACHE BOOL "activate keep files" FORCE)
-    endif(CUDA_SHOW_CODELINES)
+    endif()
 
     if (CUDA_SHOW_REGISTER)
         set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS}" -Xptxas=-v)
-    endif(CUDA_SHOW_REGISTER)
+    endif()
 
     if (CUDA_KEEP_FILES)
         set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS}" --keep --keep-dir "${PROJECT_BINARY_DIR}")
-    endif(CUDA_KEEP_FILES)
+    endif()
 
 else()
     message(FATAL_ERROR "selected CUDA compiler '${CUDA_COMPILER}' is not supported")
@@ -235,11 +236,11 @@ set(CUDA_SOURCES
 )
 
 if("${CUDA_COMPILER}" STREQUAL "clang")
-    add_library(xmrig-cu STATIC ${CUDA_SOURCES} ${CUDA_RANDOMX_SOURCES} ${CUDA_ASTROBWT_SOURCES} ${CUDA_KAWPOW_SOURCES})
+    add_library(xmrig-cu STATIC ${CUDA_SOURCES})
 
     set_target_properties(xmrig-cu PROPERTIES COMPILE_FLAGS ${CLANG_BUILD_FLAGS})
     set_target_properties(xmrig-cu PROPERTIES LINKER_LANGUAGE CXX)
-    set_source_files_properties(${CUDA_SOURCES} ${CUDA_RANDOMX_SOURCES} PROPERTIES LANGUAGE CXX)
+    set_source_files_properties(${CUDA_SOURCES} PROPERTIES LANGUAGE CXX)
 else()
-    cuda_add_library(xmrig-cu STATIC ${CUDA_SOURCES} ${CUDA_RANDOMX_SOURCES} ${CUDA_ASTROBWT_SOURCES} ${CUDA_KAWPOW_SOURCES})
+    cuda_add_library(xmrig-cu STATIC ${CUDA_SOURCES})
 endif()
