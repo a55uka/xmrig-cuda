@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
 project(xmrig-cuda)
-include(cmake/CUDA-Version.cmake)
-
 
 option(WITH_CN_LITE         "Enable CryptoNight-Lite algorithms family" ON)
 option(WITH_CN_HEAVY        "Enable CryptoNight-Heavy algorithms family" ON)
 option(WITH_CN_PICO         "Enable CryptoNight-Pico algorithm" ON)
 option(WITH_CN_GPU          "Enable CryptoNight-GPU algorithm" ON)
 option(WITH_ARGON2          "Enable Argon2 algorithms family" OFF) #unsupported
+option(WITH_DRIVER_API      "Enable CUDA Driver API and NVRTC, required for cn/r and kawpow algorithms" ON)
+
+include(cmake/CUDA-Version.cmake)
+
 if (CUDA_VERSION VERSION_LESS 9.0)
     message(STATUS "CUDA ${CUDA_VERSION}: RandomX, AstroBWT, and KawPow disabled, they do not work with old CUDA")
     option(WITH_RANDOMX         "Enable RandomX algorithms family" OFF)
@@ -18,7 +20,6 @@ else()
     option(WITH_ASTROBWT        "Enable AstroBWT algorithms family" ON)
     option(WITH_KAWPOW          "Enable KawPow algorithms family" ON)
 endif()
-option(WITH_DRIVER_API "Enable CUDA Driver API and NVRTC, required for cn/r and kawpow algorithms" ON)
 
 if (WITH_CN_LITE)
     add_definitions(/DXMRIG_ALGO_CN_LITE)
