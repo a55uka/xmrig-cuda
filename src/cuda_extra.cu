@@ -286,7 +286,7 @@ __global__ void cryptonight_extra_gpu_final( int threads, uint64_t target, uint3
 }
 
 
-template<xmrig::Algorithm::Id ALGO>
+template<xmrig_cuda::Algorithm::Id ALGO>
 __global__ void cryptonight_gpu_extra_gpu_final( int threads, uint64_t target, uint32_t* __restrict__ d_res_count, uint32_t * __restrict__ d_res_nonce, uint32_t * __restrict__ d_ctx_state,uint32_t * __restrict__ d_ctx_key2 )
 {
 	const int thread = blockDim.x * blockIdx.x + threadIdx.x;
