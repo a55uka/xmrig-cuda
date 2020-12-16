@@ -821,7 +821,7 @@ void cryptonight_core_gpu_hash(nvid_ctx* ctx, uint32_t nonce)
 template<xmrig_cuda::Algorithm::Id ALGO>
 void cryptonight_core_gpu_hash_gpu(nvid_ctx* ctx, uint32_t nonce)
 {
-    using namespace xmrig;
+    using namespace xmrig_cuda;
     constexpr CnAlgo<ALGO> props;
 
     constexpr size_t ITERATIONS   = props.iterations();
