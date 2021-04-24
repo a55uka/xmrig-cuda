@@ -3,8 +3,8 @@ on: push
 name: Test builds
 
 jobs:
-  build_win_cuda11_0:
-    name: Windows CUDA 11.0
+  build_win_cuda11_3:
+    name: Windows CUDA 11.3
     runs-on: windows-latest
     steps:
       - name: Checkout code
