@@ -70,7 +70,7 @@ public:
         AR2_WRKZ,      // "argon2/wrkz"      Argon2id (WRKZ)
         ASTROBWT_DERO, // "astrobwt"         AstroBWT (Dero)
         KAWPOW_RVN,    // "kawpow/rvn"       KawPow (RVN)
-        RX_DEFYX,      // "defyx"            DefyX (Scala).
+        RX_XLA,        // "panthera"         Panthera (Scala2).
         MAX
     };
 
@@ -113,7 +113,7 @@ public:
 
         case RX_WOW:
         case RX_KEVA:
-        case RX_DEFYX:
+        case RX_XLA:
             return 0x20000;
 
         case RX_ARQ:
@@ -167,7 +167,7 @@ public:
                 return oneMiB;
 
             case RX_ARQ:
-            case RX_DEFYX:
+            case RX_XLA:
                 return oneMiB / 4;
 
             default:
@@ -247,7 +247,7 @@ public:
         case RX_ARQ:
         case RX_SFX:
         case RX_KEVA:
-        case RX_DEFYX:
+        case RX_XLA:
             return RANDOM_X;
 
         case AR2_CHUKWA:

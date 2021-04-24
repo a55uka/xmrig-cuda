@@ -56,7 +56,7 @@ static AlgoName const algorithm_names[] = {
     { "rx/arq",           Algorithm::RX_ARQ          },
     { "rx/sfx",           Algorithm::RX_SFX          },
     { "rx/keva",          Algorithm::RX_KEVA         },
-    { "defyx",            Algorithm::RX_DEFYX        },
+    { "panthera",         Algorithm::RX_XLA          },
 #   endif
     { "cn/0",             Algorithm::CN_0            },
     { "cn/1",             Algorithm::CN_1            },

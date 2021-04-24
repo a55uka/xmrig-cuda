@@ -199,7 +199,7 @@ bool rxHash(nvid_ctx *ctx, uint32_t startNonce, uint64_t target, uint32_t *resco
             RandomX_Keva::hash(ctx, startNonce, target, rescount, resnonce, ctx->rx_batch_size);
             break;
 
-        case Algorithm::RX_DEFYX:
+        case Algorithm::RX_XLA:
             throw std::runtime_error(kUnsupportedAlgorithm);
             //RandomX_DefyX::hash(ctx, startNonce, target, rescount, resnonce, ctx->rx_batch_size);
             break;
