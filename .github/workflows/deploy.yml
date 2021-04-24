@@ -21,7 +21,7 @@ jobs:
         run: |
           cmake . -G "Visual Studio 16 2019" -DCUDA_TOOLKIT_ROOT_DIR="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.3"
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin"
-          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln
+          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln || exit 1
           cd $Env:GITHUB_WORKSPACE
           copy Release\*.dll .
           7z a -tzip -mx cuda11_3.zip *.dll
@@ -46,7 +46,7 @@ jobs:
         run: |
           cmake . -G "Visual Studio 16 2019" -DCUDA_TOOLKIT_ROOT_DIR="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0"
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin"
-          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln
+          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln || exit 1
           cd $Env:GITHUB_WORKSPACE
           copy Release\*.dll .
           7z a -tzip -mx cuda11_0.zip *.dll
@@ -71,7 +71,7 @@ jobs:
         run: |
           cmake . -G "Visual Studio 16 2019" -DCUDA_TOOLKIT_ROOT_DIR="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.2"
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin"
-          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln
+          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln || exit 1
           cd $Env:GITHUB_WORKSPACE
           copy Release\*.dll .
           7z a -tzip -mx cuda10_2.zip *.dll
@@ -96,7 +96,7 @@ jobs:
         run: |
           cmake . -G "Visual Studio 16 2019" -DCUDA_TOOLKIT_ROOT_DIR="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.1"
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin"
-          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln
+          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln || exit 1
           cd $Env:GITHUB_WORKSPACE
           copy Release\*.dll .
           7z a -tzip -mx cuda10_1.zip *.dll
@@ -121,7 +121,7 @@ jobs:
         run: |
           cmake . -G "Visual Studio 15 2017 Win64" -DCUDA_TOOLKIT_ROOT_DIR="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.0"
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin"
-          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln
+          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln || exit 1
           cd $Env:GITHUB_WORKSPACE
           copy Release\*.dll .
           7z a -tzip -mx cuda10_0.zip *.dll
@@ -149,7 +149,7 @@ jobs:
         run: |
           cmake . -G "Visual Studio 15 2017 Win64" -DCUDA_TOOLKIT_ROOT_DIR="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v9.2"
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin"
-          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln
+          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln || exit 1
           cd $Env:GITHUB_WORKSPACE
           copy Release\*.dll .
           7z a -tzip -mx cuda9_2.zip *.dll
@@ -178,7 +178,7 @@ jobs:
 #        run: |
 #          cmake . -G "Visual Studio 15 2017 Win64" -DCUDA_TOOLKIT_ROOT_DIR="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v9.1"
 #          cd "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin"
-#          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln
+#          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln || exit 1
 #          cd $Env:GITHUB_WORKSPACE
 #          copy Release\*.dll .
 #          7z a -tzip -mx cuda9_1.zip *.dll
