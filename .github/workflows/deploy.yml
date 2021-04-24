@@ -6,6 +6,31 @@ on:
 name: Create release and build artifacts
 
 jobs:
+  build_win_cuda11_3:
+    name: Windows CUDA 11.3
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Install CUDA
+        run: |
+          powershell -Command "Invoke-WebRequest https://developer.download.nvidia.com/compute/cuda/11.3.0/network_installers/cuda_11.3.0_win10_network.exe -OutFile .\cuda_setup.exe"
+          start /wait .\cuda_setup.exe -s nvcc_11.3 cudart_11.3 nvrtc_11.3 nvrtc_dev_11.3 nvml_dev_11.3
+        shell: cmd
+      - name: Build project on Windows
+        run: |
+          cmake . -G "Visual Studio 16 2019" -DCUDA_TOOLKIT_ROOT_DIR="C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.3"
+          cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin"
+          .\MSBuild.exe /p:Configuration=Release $Env:GITHUB_WORKSPACE\xmrig-cuda.sln
+          cd $Env:GITHUB_WORKSPACE
+          copy Release\*.dll .
+          7z a -tzip -mx cuda11_3.zip *.dll
+      - name: Upload Windows build artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: cuda11_3
+          path: cuda11_3.zip
+
   build_win_cuda11_0:
     name: Windows CUDA 11.0
     runs-on: windows-latest
@@ -164,7 +189,7 @@ jobs:
 #          path: cuda9_1.zip
 
   deploy:
-    needs: [build_win_cuda11_0, build_win_cuda10_2, build_win_cuda10_1, build_win_cuda10_0, build_win_cuda9_2]
+    needs: [build_win_cuda11_3, build_win_cuda11_0, build_win_cuda10_2, build_win_cuda10_1, build_win_cuda10_0, build_win_cuda9_2]
     name: Create release and upload artifacts
     runs-on: ubuntu-latest
     steps:
@@ -182,6 +207,10 @@ jobs:
         id: version
         run: echo ::set-output name=VERSION::${GITHUB_REF:10}
 
+      - name: Download Windows CUDA 11.3 build artifacts
+        uses: actions/download-artifact@v1
+        with:
+          name: cuda11_3
       - name: Download Windows CUDA 11.0 build artifacts
         uses: actions/download-artifact@v1
         with:
@@ -207,7 +236,16 @@ jobs:
 #        with:
 #          name: cuda9_1
 
-      - name: Upload Windows CUDA 11.0 build release asset
+      - name: Upload Windows CUDA 11.3 build release asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: cuda11_3/cuda11_3.zip
+          asset_name: xmrig-cuda-${{steps.version.outputs.VERSION}}-cuda11_3-win64.zip
+          asset_content_type: application/zip
+      - name: Upload Windows CUDA 11.3 build release asset
         uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
