@@ -48,7 +48,6 @@
 #endif
 
 // Declare these namespaces here for the purpose of Doxygenating them
-CUB_NS_PREFIX
 
 /*! \namespace cub
  *  \brief \p cub is the top-level namespace which contains all CUB
@@ -58,5 +57,3 @@ namespace cub
 {
 
 }
-
-CUB_NS_POSTFIX

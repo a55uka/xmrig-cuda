@@ -37,7 +37,6 @@
 #include "../thread/thread_load.cuh"
 #include "../warp/warp_reduce.cuh"
 #include "../block/block_load.cuh"
-#include "../block/radix_rank_sort_operations.cuh"
 #include "../config.cuh"
 #include "../util_type.cuh"
 #include "../iterator/cache_modified_input_iterator.cuh"
@@ -122,7 +121,7 @@ struct AgentRadixSortUpsweep
         PACKING_RATIO           = sizeof(PackedCounter) / sizeof(DigitCounter),
         LOG_PACKING_RATIO       = Log2<PACKING_RATIO>::VALUE,
 
-        LOG_COUNTER_LANES       = CUB_MAX(0, int(RADIX_BITS) - int(LOG_PACKING_RATIO)),
+        LOG_COUNTER_LANES       = CUB_MAX(0, RADIX_BITS - LOG_PACKING_RATIO),
         COUNTER_LANES           = 1 << LOG_COUNTER_LANES,
 
         // To prevent counter overflow, we must periodically unpack and aggregate the
@@ -139,9 +138,6 @@ struct AgentRadixSortUpsweep
 
     // Input iterator wrapper type (for applying cache modifier)s
     typedef CacheModifiedInputIterator<LOAD_MODIFIER, UnsignedBits, OffsetT> KeysItr;
-
-    // Digit extractor type
-    typedef BFEDigitExtractor<KeyT> DigitExtractorT;
 
     /**
      * Shared memory storage layout
@@ -171,8 +167,12 @@ struct AgentRadixSortUpsweep
     // Input and output device pointers
     KeysItr         d_keys_in;
 
-    // Digit extractor
-    DigitExtractorT digit_extractor;
+    // The least-significant bit position of the current digit to extract
+    int             current_bit;
+
+    // Number of bits in current digit
+    int             num_bits;
+
 
 
     //---------------------------------------------------------------------
@@ -217,7 +217,7 @@ struct AgentRadixSortUpsweep
         UnsignedBits converted_key = Traits<KeyT>::TwiddleIn(key);
 
         // Extract current digit bits
-        UnsignedBits digit = digit_extractor.Digit(converted_key);
+        UnsignedBits digit = BFE(converted_key, current_bit, num_bits);
 
         // Get sub-counter offset
         UnsignedBits sub_counter = digit & (PACKING_RATIO - 1);
@@ -342,7 +342,8 @@ struct AgentRadixSortUpsweep
     :
         temp_storage(temp_storage.Alias()),
         d_keys_in(reinterpret_cast<const UnsignedBits*>(d_keys_in)),
-        digit_extractor(current_bit, num_bits)
+        current_bit(current_bit),
+        num_bits(num_bits)
     {}
 
 

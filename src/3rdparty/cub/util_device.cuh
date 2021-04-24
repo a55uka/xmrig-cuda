@@ -121,7 +121,7 @@ __global__ void EmptyKernel(void) { }
 /**
  * \brief Returns the current device or -1 if an error occurred.
  */
-CUB_RUNTIME_FUNCTION inline int CurrentDevice()
+CUB_RUNTIME_FUNCTION __forceinline__ int CurrentDevice()
 {
 #if defined(CUB_RUNTIME_ENABLED) // Host code or device code with the CUDA runtime.
 
@@ -147,14 +147,14 @@ private:
     int const old_device;
     bool const needs_reset;
 public:
-    __host__ inline SwitchDevice(int new_device)
+    __host__ __forceinline__ SwitchDevice(int new_device)
       : old_device(CurrentDevice()), needs_reset(old_device != new_device)
     {
         if (needs_reset)
             CubDebug(cudaSetDevice(new_device));
     }
 
-    __host__ inline ~SwitchDevice()
+    __host__ __forceinline__ ~SwitchDevice()
     {
         if (needs_reset)
             CubDebug(cudaSetDevice(old_device));
@@ -165,7 +165,7 @@ public:
  * \brief Returns the number of CUDA devices available or -1 if an error
  *        occurred.
  */
-CUB_RUNTIME_FUNCTION inline int DeviceCountUncached()
+CUB_RUNTIME_FUNCTION __forceinline__ int DeviceCountUncached()
 {
 #if defined(CUB_RUNTIME_ENABLED) // Host code or device code with the CUDA runtime.
 
@@ -198,20 +198,9 @@ struct ValueCache
      * \brief Call the nullary function to produce the value and construct the
      *        cache.
      */
-    __host__ inline ValueCache() : value(Function()) {}
+    __host__ __forceinline__ ValueCache() : value(Function()) {}
 };
 
-#endif
-
-#if CUB_CPP_DIALECT >= 2011
-// Host code, only safely usable in C++11 or newer, where thread-safe
-// initialization of static locals is guaranteed.  This is a separate function
-// to avoid defining a local static in a host/device function.
-__host__ inline int DeviceCountCachedValue()
-{
-    static ValueCache<int, DeviceCountUncached> cache;
-    return cache.value;
-}
 #endif
 
 /**
@@ -221,14 +210,17 @@ __host__ inline int DeviceCountCachedValue()
  *
  * \note This function is thread safe.
  */
-CUB_RUNTIME_FUNCTION inline int DeviceCount()
+CUB_RUNTIME_FUNCTION __forceinline__ int DeviceCount()
 {
     int result = -1;
     if (CUB_IS_HOST_CODE) {
         #if CUB_INCLUDE_HOST_CODE
             #if CUB_CPP_DIALECT >= 2011
                 // Host code and C++11.
-                result = DeviceCountCachedValue();
+                // C++11 guarantees that initialization of static locals is thread safe.
+                static ValueCache<int, DeviceCountUncached> cache;
+
+                result = cache.value;
             #else
                 // Host code and C++98.
                 result = DeviceCountUncached();
@@ -281,7 +273,7 @@ public:
     /**
      * \brief Construct the cache.
      */
-    __host__ inline PerDeviceAttributeCache() : entries_()
+    __host__ __forceinline__ PerDeviceAttributeCache() : entries_()
     {
         assert(DeviceCount() <= CUB_MAX_DEVICES);
     }
@@ -320,8 +312,7 @@ public:
 
                 // We don't use `CubDebug` here because we let the user code
                 // decide whether or not errors are hard errors.
-                payload.error = std::forward<Invocable>(f)(payload.attribute);
-                if (payload.error)
+                if (payload.error = std::forward<Invocable>(f)(payload.attribute))
                     // Clear the global CUDA error state which may have been
                     // set by the last call. Otherwise, errors may "leak" to
                     // unrelated kernel launches.
@@ -359,7 +350,7 @@ public:
 /**
  * \brief Retrieves the PTX version that will be used on the current device (major * 100 + minor * 10).
  */
-CUB_RUNTIME_FUNCTION inline cudaError_t PtxVersionUncached(int& ptx_version)
+CUB_RUNTIME_FUNCTION __forceinline__ cudaError_t PtxVersionUncached(int& ptx_version)
 {
     // Instantiate `EmptyKernel<void>` in both host and device code to ensure
     // it can be called.
@@ -399,7 +390,7 @@ CUB_RUNTIME_FUNCTION inline cudaError_t PtxVersionUncached(int& ptx_version)
 /**
  * \brief Retrieves the PTX version that will be used on \p device (major * 100 + minor * 10).
  */
-__host__ inline cudaError_t PtxVersionUncached(int& ptx_version, int device)
+__host__ __forceinline__ cudaError_t PtxVersionUncached(int& ptx_version, int device)
 {
     SwitchDevice sd(device);
     return PtxVersionUncached(ptx_version);
@@ -407,7 +398,7 @@ __host__ inline cudaError_t PtxVersionUncached(int& ptx_version, int device)
 
 #if CUB_CPP_DIALECT >= 2011 // C++11 and later.
 template <typename Tag>
-__host__ inline PerDeviceAttributeCache& GetPerDeviceAttributeCache()
+__host__ __forceinline__ PerDeviceAttributeCache& GetPerDeviceAttributeCache()
 {
     // C++11 guarantees that initialization of static locals is thread safe.
     static PerDeviceAttributeCache cache;
@@ -425,7 +416,7 @@ struct SmVersionCacheTag {};
  *
  * \note This function is thread safe.
  */
-__host__ inline cudaError_t PtxVersion(int& ptx_version, int device)
+__host__ __forceinline__ cudaError_t PtxVersion(int& ptx_version, int device)
 {
 #if CUB_CPP_DIALECT >= 2011 // C++11 and later.
 
@@ -454,7 +445,7 @@ __host__ inline cudaError_t PtxVersion(int& ptx_version, int device)
  *
  * \note This function is thread safe.
  */
-CUB_RUNTIME_FUNCTION inline cudaError_t PtxVersion(int& ptx_version)
+CUB_RUNTIME_FUNCTION __forceinline__ cudaError_t PtxVersion(int& ptx_version)
 {
     cudaError_t result = cudaErrorUnknown;
     if (CUB_IS_HOST_CODE) {
@@ -490,7 +481,7 @@ CUB_RUNTIME_FUNCTION inline cudaError_t PtxVersion(int& ptx_version)
 /**
  * \brief Retrieves the SM version of \p device (major * 100 + minor * 10)
  */
-CUB_RUNTIME_FUNCTION inline cudaError_t SmVersionUncached(int& sm_version, int device = CurrentDevice())
+CUB_RUNTIME_FUNCTION __forceinline__ cudaError_t SmVersionUncached(int& sm_version, int device = CurrentDevice())
 {
 #if defined(CUB_RUNTIME_ENABLED) // Host code or device code with the CUDA runtime.
 
@@ -524,7 +515,7 @@ CUB_RUNTIME_FUNCTION inline cudaError_t SmVersionUncached(int& sm_version, int d
  *
  * \note This function is thread safe.
  */
-CUB_RUNTIME_FUNCTION inline cudaError_t SmVersion(int& sm_version, int device = CurrentDevice())
+CUB_RUNTIME_FUNCTION __forceinline__ cudaError_t SmVersion(int& sm_version, int device = CurrentDevice())
 {
     cudaError_t result = cudaErrorUnknown;
     if (CUB_IS_HOST_CODE) {
@@ -557,7 +548,7 @@ CUB_RUNTIME_FUNCTION inline cudaError_t SmVersion(int& sm_version, int device = 
 /**
  * Synchronize the specified \p stream.
  */
-CUB_RUNTIME_FUNCTION inline cudaError_t SyncStream(cudaStream_t stream)
+CUB_RUNTIME_FUNCTION __forceinline__ cudaError_t SyncStream(cudaStream_t stream)
 {
     cudaError_t result = cudaErrorUnknown;
     if (CUB_IS_HOST_CODE) {
@@ -613,7 +604,7 @@ CUB_RUNTIME_FUNCTION inline cudaError_t SyncStream(cudaStream_t stream)
  *
  */
 template <typename KernelPtr>
-CUB_RUNTIME_FUNCTION inline
+CUB_RUNTIME_FUNCTION __forceinline__
 cudaError_t MaxSmOccupancy(
     int&                max_sm_occupancy,          ///< [out] maximum number of thread blocks that can reside on a single SM
     KernelPtr           kernel_ptr,                 ///< [in] Kernel pointer for which to compute SM occupancy

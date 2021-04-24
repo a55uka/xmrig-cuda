@@ -36,7 +36,6 @@
 
 #include "block_exchange.cuh"
 #include "block_radix_rank.cuh"
-#include "radix_rank_sort_operations.cuh"
 #include "../config.cuh"
 #include "../util_ptx.cuh"
 #include "../util_type.cuh"
@@ -77,9 +76,7 @@ namespace cub {
  *   bit-sequences of \p RADIX_BITS as radix digit places.  Although the direct radix sorting
  *   method can only be applied to unsigned integral types, BlockRadixSort
  *   is able to sort signed and floating-point types via simple bit-wise transformations
- *   that ensure lexicographic key ordering. For floating-point types -0.0 and +0.0 are
- *   considered equal and appear in the result in the same order as they appear in
- *   the input.
+ *   that ensure lexicographic key ordering.
  * - \rowmajor
  *
  * \par Performance Considerations
@@ -178,9 +175,6 @@ private:
             PTX_ARCH>
         DescendingBlockRadixRank;
 
-    /// Digit extractor type
-    typedef BFEDigitExtractor<KeyT> DigitExtractorT;
-
     /// BlockExchange utility type for keys
     typedef BlockExchange<KeyT, BLOCK_DIM_X, ITEMS_PER_THREAD, false, BLOCK_DIM_Y, BLOCK_DIM_Z, PTX_ARCH> BlockExchangeKeys;
 
@@ -222,26 +216,30 @@ private:
     __device__ __forceinline__ void RankKeys(
         UnsignedBits    (&unsigned_keys)[ITEMS_PER_THREAD],
         int             (&ranks)[ITEMS_PER_THREAD],
-        DigitExtractorT digit_extractor,
+        int             begin_bit,
+        int             pass_bits,
         Int2Type<false> /*is_descending*/)
     {
         AscendingBlockRadixRank(temp_storage.asending_ranking_storage).RankKeys(
-                unsigned_keys,
-                ranks,
-                digit_extractor);
+            unsigned_keys,
+            ranks,
+            begin_bit,
+            pass_bits);
     }
 
     /// Rank keys (specialized for descending sort)
     __device__ __forceinline__ void RankKeys(
         UnsignedBits    (&unsigned_keys)[ITEMS_PER_THREAD],
         int             (&ranks)[ITEMS_PER_THREAD],
-        DigitExtractorT digit_extractor,
+        int             begin_bit,
+        int             pass_bits,
         Int2Type<true>  /*is_descending*/)
     {
         DescendingBlockRadixRank(temp_storage.descending_ranking_storage).RankKeys(
-                unsigned_keys,
-                ranks,
-                digit_extractor);
+            unsigned_keys,
+            ranks,
+            begin_bit,
+            pass_bits);
     }
 
     /// ExchangeValues (specialized for key-value sort, to-blocked arrangement)
@@ -303,11 +301,10 @@ private:
         while (true)
         {
             int pass_bits = CUB_MIN(RADIX_BITS, end_bit - begin_bit);
-            DigitExtractorT digit_extractor(begin_bit, pass_bits);
 
             // Rank the blocked keys
             int ranks[ITEMS_PER_THREAD];
-            RankKeys(unsigned_keys, ranks, digit_extractor, is_descending);
+            RankKeys(unsigned_keys, ranks, begin_bit, pass_bits, is_descending);
             begin_bit += RADIX_BITS;
 
             CTA_SYNC();
@@ -360,11 +357,10 @@ public:
         while (true)
         {
             int pass_bits = CUB_MIN(RADIX_BITS, end_bit - begin_bit);
-            DigitExtractorT digit_extractor(begin_bit, pass_bits);
 
             // Rank the blocked keys
             int ranks[ITEMS_PER_THREAD];
-            RankKeys(unsigned_keys, ranks, digit_extractor, is_descending);
+            RankKeys(unsigned_keys, ranks, begin_bit, pass_bits, is_descending);
             begin_bit += RADIX_BITS;
 
             CTA_SYNC();
