@@ -364,7 +364,7 @@ __device__ __forceinline__ void LoadDirectWarpStriped(
     #pragma unroll
     for (int ITEM = 0; ITEM < ITEMS_PER_THREAD; ITEM++)
     {
-        items[ITEM] = block_itr[warp_offset + tid + (ITEM * CUB_PTX_WARP_THREADS)];
+        new(&items[ITEM]) InputT(block_itr[warp_offset + tid + (ITEM * CUB_PTX_WARP_THREADS)]);
     }
 }
 
@@ -401,7 +401,7 @@ __device__ __forceinline__ void LoadDirectWarpStriped(
     {
         if (warp_offset + tid + (ITEM * CUB_PTX_WARP_THREADS) < valid_items)
         {
-            items[ITEM] = block_itr[warp_offset + tid + (ITEM * CUB_PTX_WARP_THREADS)];
+            new(&items[ITEM]) InputT(block_itr[warp_offset + tid + (ITEM * CUB_PTX_WARP_THREADS)]);
         }
     }
 }
@@ -865,7 +865,7 @@ private:
         };
 
         // Assert BLOCK_THREADS must be a multiple of WARP_THREADS
-        CUB_STATIC_ASSERT((BLOCK_THREADS % WARP_THREADS == 0), "BLOCK_THREADS must be a multiple of WARP_THREADS");
+        CUB_STATIC_ASSERT((int(BLOCK_THREADS) % int(WARP_THREADS) == 0), "BLOCK_THREADS must be a multiple of WARP_THREADS");
 
         // BlockExchange utility type for keys
         typedef BlockExchange<InputT, BLOCK_DIM_X, ITEMS_PER_THREAD, false, BLOCK_DIM_Y, BLOCK_DIM_Z, PTX_ARCH> BlockExchange;
@@ -940,7 +940,7 @@ private:
         };
 
         // Assert BLOCK_THREADS must be a multiple of WARP_THREADS
-        CUB_STATIC_ASSERT((BLOCK_THREADS % WARP_THREADS == 0), "BLOCK_THREADS must be a multiple of WARP_THREADS");
+        CUB_STATIC_ASSERT((int(BLOCK_THREADS) % int(WARP_THREADS) == 0), "BLOCK_THREADS must be a multiple of WARP_THREADS");
 
         // BlockExchange utility type for keys
         typedef BlockExchange<InputT, BLOCK_DIM_X, ITEMS_PER_THREAD, true, BLOCK_DIM_Y, BLOCK_DIM_Z, PTX_ARCH> BlockExchange;

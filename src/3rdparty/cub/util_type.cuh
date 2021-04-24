@@ -37,7 +37,7 @@
 #include <limits>
 #include <cfloat>
 
-#if (__CUDACC_VER_MAJOR__ >= 9)
+#if (__CUDACC_VER_MAJOR__ >= 9 || CUDA_VERSION >= 9000) && !__NVCOMPILER_CUDA__
     #include <cuda_fp16.h>
 #endif
 
@@ -62,7 +62,7 @@ namespace cub {
 
 
 /******************************************************************************
- * Type equality
+ * Conditional types
  ******************************************************************************/
 
 /**
@@ -88,7 +88,7 @@ struct If<false, ThenType, ElseType>
 
 
 /******************************************************************************
- * Conditional types
+ * Type equality
  ******************************************************************************/
 
 /**
@@ -358,7 +358,7 @@ struct UnitWord
     {
         enum {
             UNIT_ALIGN_BYTES    = AlignBytes<Unit>::ALIGN_BYTES,
-            IS_MULTIPLE         = (sizeof(T) % sizeof(Unit) == 0) && (ALIGN_BYTES % UNIT_ALIGN_BYTES == 0)
+            IS_MULTIPLE         = (sizeof(T) % sizeof(Unit) == 0) && (int(ALIGN_BYTES) % int(UNIT_ALIGN_BYTES) == 0)
         };
     };
 
@@ -1063,7 +1063,7 @@ struct FpLimits<double>
 };
 
 
-#if (__CUDACC_VER_MAJOR__ >= 9)
+#if (__CUDACC_VER_MAJOR__ >= 9 || CUDA_VERSION >= 9000) && !__NVCOMPILER_CUDA__
 template <>
 struct FpLimits<__half>
 {
@@ -1143,7 +1143,7 @@ template <> struct NumericTraits<unsigned long long> :  BaseTraits<UNSIGNED_INTE
 
 template <> struct NumericTraits<float> :               BaseTraits<FLOATING_POINT, true, false, unsigned int, float> {};
 template <> struct NumericTraits<double> :              BaseTraits<FLOATING_POINT, true, false, unsigned long long, double> {};
-#if (__CUDACC_VER_MAJOR__ >= 9)
+#if (__CUDACC_VER_MAJOR__ >= 9 || CUDA_VERSION >= 9000) && !__NVCOMPILER_CUDA__
     template <> struct NumericTraits<__half> :          BaseTraits<FLOATING_POINT, true, false, unsigned short, __half> {};
 #endif
 
