@@ -5,7 +5,7 @@ name: Test builds
 jobs:
   build_win_cuda11_3:
     name: Windows CUDA 12.3
-    runs-on: windows-2022
+    runs-on: windows-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@master
