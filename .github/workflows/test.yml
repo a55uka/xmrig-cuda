@@ -12,7 +12,8 @@ jobs:
       - name: Install CUDA
         run: |
           powershell -Command "Invoke-WebRequest https://developer.download.nvidia.com/compute/cuda/12.3.2/network_installers/cuda_12.3.2_windows_network.exe -OutFile .\cuda_setup.exe"
-          start /wait .\cuda_setup.exe -s
+          start /wait .\cuda_setup.exe /?
+          start /wait .\cuda_setup.exe
         shell: cmd
       - name: Build project on Windows
         run: |
