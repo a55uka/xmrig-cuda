@@ -108,7 +108,7 @@ jobs:
 
   build_win_cuda10_0:
     name: Windows CUDA 10.0
-    runs-on: windows-2016
+    runs-on: windows-2019
     steps:
       - name: Checkout code
         uses: actions/checkout@master
@@ -133,7 +133,7 @@ jobs:
 
   build_win_cuda9_2:
     name: Windows CUDA 9.2
-    runs-on: windows-2016
+    runs-on: windows-2019
     steps:
       - name: Checkout code
         uses: actions/checkout@master
