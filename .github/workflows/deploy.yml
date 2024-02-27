@@ -134,7 +134,7 @@ jobs:
   deploy:
     needs: [build_win_cuda11_4, build_win_cuda11_3, build_win_cuda11_0, build_win_cuda10_2, build_win_cuda10_1]
     name: Create release and upload artifacts
-    runs-on: ubuntu-2019
+    runs-on: ubuntu-latest
     steps:
       - name: Create Release
         id: create_release
@@ -180,6 +180,7 @@ jobs:
           asset_path: cuda11_4/cuda11_4.zip
           asset_name: xmrig-cuda-${{steps.version.outputs.VERSION}}-cuda11_4-win64.zip
           asset_content_type: application/zip
+
       - name: Upload Windows CUDA 11.3 build release asset
         uses: actions/upload-release-asset@v1.0.1
         env:
@@ -189,6 +190,7 @@ jobs:
           asset_path: cuda11_3/cuda11_3.zip
           asset_name: xmrig-cuda-${{steps.version.outputs.VERSION}}-cuda11_3-win64.zip
           asset_content_type: application/zip
+
       - name: Upload Windows CUDA 11.0 build release asset
         uses: actions/upload-release-asset@v1.0.1
         env:
@@ -198,6 +200,7 @@ jobs:
           asset_path: cuda11_0/cuda11_0.zip
           asset_name: xmrig-cuda-${{steps.version.outputs.VERSION}}-cuda11_0-win64.zip
           asset_content_type: application/zip
+
       - name: Upload Windows CUDA 10.2 build release asset
         uses: actions/upload-release-asset@v1.0.1
         env:
@@ -207,6 +210,7 @@ jobs:
           asset_path: cuda10_2/cuda10_2.zip
           asset_name: xmrig-cuda-${{steps.version.outputs.VERSION}}-cuda10_2-win64.zip
           asset_content_type: application/zip
+
       - name: Upload Windows CUDA 10.1 build release asset
         uses: actions/upload-release-asset@v1.0.1
         env:
