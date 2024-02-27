@@ -5,13 +5,13 @@ name: Test builds
 jobs:
   build_win_cuda12_3:
     name: Windows CUDA 12.3
-    runs-on: windows-2022
+    runs-on: windows-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@master
       - name: Install CUDA
         run: |
-          powershell -Command "Invoke-WebRequest https://developer.download.nvidia.com/compute/cuda/12.3.2/network_installers/cuda_12.3.2_windows_network.exe -OutFile .\cuda_setup.exe"
+          powershell -Command "Invoke-WebRequest https://developer.download.nvidia.com/compute/cuda/12.3.2/local_installers/cuda_12.3.2_546.12_windows.exe -OutFile .\cuda_setup.exe"
           start /wait .\cuda_setup.exe -s
         shell: cmd
       - name: Build project on Windows
