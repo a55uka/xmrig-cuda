@@ -151,23 +151,23 @@ jobs:
         run: echo ::set-output name=VERSION::${GITHUB_REF:10}
 
       - name: Download Windows CUDA 11.4 build artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cuda11_4
       - name: Download Windows CUDA 11.3 build artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cuda11_3
       - name: Download Windows CUDA 11.0 build artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cuda11_0
       - name: Download Windows CUDA 10.2 build artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cuda10_2
       - name: Download Windows CUDA 10.1 build artifacts
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v4
         with:
           name: cuda10_1
 
