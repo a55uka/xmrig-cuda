@@ -158,7 +158,7 @@ jobs:
           path: cuda10_1.zip
 
   deploy:
-    needs: [build_win_cuda11_4, build_win_cuda11_3, build_win_cuda11_0, build_win_cuda10_2, build_win_cuda10_1]
+    needs: [build_win_cuda12_9, build_win_cuda11_4, build_win_cuda11_3, build_win_cuda11_0, build_win_cuda10_2, build_win_cuda10_1]
     name: Create release and upload artifacts
     runs-on: ubuntu-latest
     steps:
@@ -176,6 +176,10 @@ jobs:
         id: version
         run: echo ::set-output name=VERSION::${GITHUB_REF:10}
 
+      - name: Download Windows CUDA 12.9 build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cuda12_9
       - name: Download Windows CUDA 11.4 build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -196,6 +200,16 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: cuda10_1
+
+      - name: Upload Windows CUDA 12.9 build release asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: cuda12_9/cuda12_9.zip
+          asset_name: xmrig-cuda-${{steps.version.outputs.VERSION}}-cuda12_9-win64.zip
+          asset_content_type: application/zip
 
       - name: Upload Windows CUDA 11.4 build release asset
         uses: actions/upload-release-asset@v1.0.1
