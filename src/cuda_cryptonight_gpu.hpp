@@ -217,30 +217,30 @@ __forceinline__ __device__ __m128 _mm_div_ps(__m128 a, __m128 b)
 __forceinline__ __device__ __m128 _mm_and_ps(__m128 a, int b)
 {
     return __m128(
-        int_as_float(float_as_int(a.x) & b),
-        int_as_float(float_as_int(a.y) & b),
-        int_as_float(float_as_int(a.z) & b),
-        int_as_float(float_as_int(a.w) & b)
+        __int2float_rn(__float2int_rn(a.x) & b), // __int2float_rn int_as_float
+        __int2float_rn(__float2int_rn(a.y) & b), // __float2int_rn float_as_int
+        __int2float_rn(__float2int_rn(a.z) & b),
+        __int2float_rn(__float2int_rn(a.w) & b)
     );
 }
 
 __forceinline__ __device__ __m128 _mm_or_ps(__m128 a, int b)
 {
     return __m128(
-        int_as_float(float_as_int(a.x) | b),
-        int_as_float(float_as_int(a.y) | b),
-        int_as_float(float_as_int(a.z) | b),
-        int_as_float(float_as_int(a.w) | b)
+        __int2float_rn(__float2int_rn(a.x) | b),
+        __int2float_rn(__float2int_rn(a.y) | b),
+        __int2float_rn(__float2int_rn(a.z) | b),
+        __int2float_rn(__float2int_rn(a.w) | b)
     );
 }
 
 __forceinline__ __device__ __m128 _mm_xor_ps(__m128 a, int b)
 {
     return __m128(
-        int_as_float(float_as_int(a.x) ^ b),
-        int_as_float(float_as_int(a.y) ^ b),
-        int_as_float(float_as_int(a.z) ^ b),
-        int_as_float(float_as_int(a.w) ^ b)
+        __int2float_rn(__float2int_rn(a.x) ^ b),
+        __int2float_rn(__float2int_rn(a.y) ^ b),
+        __int2float_rn(__float2int_rn(a.z) ^ b),
+        __int2float_rn(__float2int_rn(a.w) ^ b)
     );
 }
 
