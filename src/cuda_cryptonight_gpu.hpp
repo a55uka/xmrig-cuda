@@ -81,10 +81,10 @@ struct __m128 : public float4
 
     __forceinline__ __device__ __m128( const __m128i& x0)
     {
-        float4::x = int2float(x0.x);
-        float4::y = int2float(x0.y);
-        float4::z = int2float(x0.z);
-        float4::w = int2float(x0.w);
+        float4::x = __int2float_rn(x0.x); // int2float
+        float4::y = __int2float_rn(x0.y);
+        float4::z = __int2float_rn(x0.z);
+        float4::w = __int2float_rn(x0.w);
     }
 
     __forceinline__ __device__ __m128i get_int( )
